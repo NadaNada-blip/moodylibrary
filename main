@@ -1,60 +1,259 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
+import React from 'react';
 
-# Sample book database based on aesthetic profiles
-book_db = {
-    ("blue", "jazz", "melancholy", "night", "wine"): ("The Great Gatsby", "A moody classic for a midnight jazz session with wine in hand."),
-    ("red", "rock", "energized", "afternoon", "coffee"): ("The Catcher in the Rye", "A fiery tale for an afternoon blast of caffeine and rebellion."),
-    ("green", "classical", "calm", "morning", "tea"): ("Pride and Prejudice", "Something refined for a tranquil tea-filled morning."),
-    ("yellow", "pop", "happy", "daytime", "lemonade"): ("Eleanor & Park", "Sweet and bubbly—just like your sunny disposition."),
-    ("black", "blues", "lonely", "late night", "whiskey"): ("Norwegian Wood", "For nights when the blues run deep and whiskey burns slow."),
+const Component = () => {
+  const [step, setStep] = React.useState(0);
+  const [selections, setSelections] = React.useState({
+    color: '',
+    genre: '',
+    mood: '',
+    timeOfDay: '',
+    drink: ''
+  });
+  const [recommendation, setRecommendation] = React.useState(null);
+
+  const colors = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Orange', 'Black', 'White'];
+  const genres = ['Jazz', 'Rock', 'Classical', 'Hip Hop', 'Electronic', 'Folk', 'R&B', 'Metal'];
+  const moods = ['Happy', 'Melancholic', 'Excited', 'Calm', 'Anxious', 'Nostalgic', 'Inspired', 'Contemplative'];
+  const timesOfDay = ['Dawn', 'Morning', 'Noon', 'Afternoon', 'Dusk', 'Evening', 'Night', 'Midnight'];
+  const drinks = ['Coffee', 'Tea', 'Wine', 'Whiskey', 'Beer', 'Water', 'Cocktail', 'Hot Chocolate'];
+
+  const books = [
+    {
+      title: "The Great Gatsby",
+      author: "F. Scott Fitzgerald",
+      description: "A tale of wealth, love, and disillusionment in the Jazz Age.",
+      cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      title: "One Hundred Years of Solitude",
+      author: "Gabriel García Márquez",
+      description: "A multi-generational tale of the Buendía family in the fictional town of Macondo.",
+      cover: "https://images.unsplash.com/photo-1495640452828-3df6795cf69b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      title: "Norwegian Wood",
+      author: "Haruki Murakami",
+      description: "A nostalgic story of loss and sexuality set in Tokyo during the late 1960s.",
+      cover: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      title: "Brave New World",
+      author: "Aldous Huxley",
+      description: "A dystopian novel set in a futuristic World State of genetically modified citizens.",
+      cover: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      title: "The Wind-Up Bird Chronicle",
+      author: "Haruki Murakami",
+      description: "A surreal narrative about a man's search for his missing wife that evolves into a journey through Japan's dark history.",
+      cover: "https://images.unsplash.com/photo-1476275466078-4007374efbbe?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+    }
+  ];
+
+  const generateRecommendation = () => {
+    const randomBook = books[Math.floor(Math.random() * books.length)];
+    
+    const rationales = [
+      `Ah, ${selections.color} and ${selections.genre} music? That's a combination that reminds me of ${randomBook.title}. It's perfect for when you're feeling ${selections.mood.toLowerCase()}, especially during ${selections.timeOfDay.toLowerCase()}. Sip your ${selections.drink.toLowerCase()} slowly with this one.`,
+      `You know, when someone tells me they enjoy ${selections.drink} during ${selections.timeOfDay.toLowerCase()} while feeling ${selections.mood.toLowerCase()}, I immediately think of ${randomBook.title}. The ${selections.color.toLowerCase()} tones of this story will resonate with your ${selections.genre.toLowerCase()} sensibilities.`,
+      `${randomBook.title} has that ${selections.color.toLowerCase()} quality that matches your ${selections.mood.toLowerCase()} mood perfectly. I'd recommend reading it during ${selections.timeOfDay.toLowerCase()} with a glass of ${selections.drink.toLowerCase()}, maybe with some ${selections.genre} playing softly in the background.`,
+      `For someone who appreciates ${selections.genre} and the color ${selections.color.toLowerCase()}, ${randomBook.title} offers a journey that complements your ${selections.mood.toLowerCase()} state. It's the literary equivalent of enjoying ${selections.drink} at ${selections.timeOfDay.toLowerCase()}.`
+    ];
+
+    const rationale = rationales[Math.floor(Math.random() * rationales.length)];
+    
+    setRecommendation({
+      ...randomBook,
+      rationale
+    });
+    
+    setStep(step + 1);
+  };
+
+  const handleSelect = (category, value) => {
+    setSelections({
+      ...selections,
+      [category]: value
+    });
+    setStep(step + 1);
+  };
+
+  const resetQuiz = () => {
+    setStep(0);
+    setSelections({
+      color: '',
+      genre: '',
+      mood: '',
+      timeOfDay: '',
+      drink: ''
+    });
+    setRecommendation(null);
+  };
+
+  const renderStep = () => {
+    switch(step) {
+      case 0:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold mb-6">Choose a color that speaks to you today:</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {colors.map(color => (
+                <button
+                  key={color}
+                  onClick={() => handleSelect('color', color)}
+                  className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                  style={{ 
+                    backgroundColor: color.toLowerCase(), 
+                    color: ['White', 'Yellow'].includes(color) ? 'black' : 'white'
+                  }}
+                >
+                  {color}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      case 1:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold mb-6">What music genre resonates with you right now?</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {genres.map(genre => (
+                <button
+                  key={genre}
+                  onClick={() => handleSelect('genre', genre)}
+                  className="p-4 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-colors"
+                >
+                  {genre}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold mb-6">How are you feeling today?</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {moods.map(mood => (
+                <button
+                  key={mood}
+                  onClick={() => handleSelect('mood', mood)}
+                  className="p-4 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors"
+                >
+                  {mood}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold mb-6">What time of day do you prefer for reading?</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {timesOfDay.map(time => (
+                <button
+                  key={time}
+                  onClick={() => handleSelect('timeOfDay', time)}
+                  className="p-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+                >
+                  {time}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold mb-6">What's your drink of choice while reading?</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {drinks.map(drink => (
+                <button
+                  key={drink}
+                  onClick={() => handleSelect('drink', drink)}
+                  className="p-4 bg-amber-600 text-white rounded-lg shadow-md hover:bg-amber-700 transition-colors"
+                >
+                  {drink}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      case 5:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold mb-6">Your selections:</h2>
+            <div className="bg-gray-100 p-6 rounded-lg shadow-md mb-6">
+              <p><span className="font-semibold">Color:</span> {selections.color}</p>
+              <p><span className="font-semibold">Music Genre:</span> {selections.genre}</p>
+              <p><span className="font-semibold">Mood:</span> {selections.mood}</p>
+              <p><span className="font-semibold">Time of Day:</span> {selections.timeOfDay}</p>
+              <p><span className="font-semibold">Drink:</span> {selections.drink}</p>
+            </div>
+            <button
+              onClick={generateRecommendation}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors"
+            >
+              Get My Book Recommendation
+            </button>
+          </div>
+        );
+      case 6:
+        return (
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold mb-6">Your Personalized Recommendation</h2>
+            <div className="bg-gray-100 p-6 rounded-lg shadow-md mb-6 flex flex-col md:flex-row items-center">
+              <img 
+                src={recommendation.cover} 
+                alt={recommendation.title} 
+                className="w-48 h-64 object-cover rounded-md shadow-md mb-4 md:mb-0 md:mr-6"
+              />
+              <div className="text-left">
+                <h3 className="text-xl font-bold">{recommendation.title}</h3>
+                <p className="text-gray-700 mb-2">by {recommendation.author}</p>
+                <p className="mb-4">{recommendation.description}</p>
+                <div className="bg-amber-100 p-4 rounded-md border-l-4 border-amber-500">
+                  <p className="italic text-amber-800">{recommendation.rationale}</p>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={resetQuiz}
+              className="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-colors"
+            >
+              Start Over
+            </button>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        <header className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-indigo-800 mb-2">Moody Library</h1>
+          <p className="text-lg text-gray-600">Like a friendly digital bartender, but books.</p>
+        </header>
+        
+        <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
+          {renderStep()}
+        </div>
+        
+        <footer className="mt-12 text-center text-gray-500 text-sm">
+          <p>Find your perfect read based on your mood and aesthetic preferences.</p>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <Component />
+  );
 }
-
-# Options for dropdowns
-colors = ["blue", "red", "green", "yellow", "black"]
-music = ["jazz", "rock", "classical", "pop", "blues"]
-moods = ["melancholy", "energized", "calm", "happy", "lonely"]
-times = ["morning", "afternoon", "daytime", "night", "late night"]
-drinks = ["tea", "coffee", "lemonade", "wine", "whiskey"]
-
-class BookBartenderApp:
-    def __init__(self, root):
-        self.root = root
-        root.title("Book Bartender")
-        root.geometry("400x400")
-
-        self.create_widgets()
-
-    def create_widgets(self):
-        ttk.Label(self.root, text="Welcome to the Book Bartender!", font=("Helvetica", 16)).pack(pady=10)
-
-        self.choices = {}
-        self.create_dropdown("Choose a color:", colors, "color")
-        self.create_dropdown("Pick a music genre:", music, "music")
-        self.create_dropdown("What's your mood?", moods, "mood")
-        self.create_dropdown("Time of day:", times, "time")
-        self.create_dropdown("Choose a drink:", drinks, "drink")
-
-        ttk.Button(self.root, text="Get Recommendation", command=self.recommend_book).pack(pady=20)
-
-    def create_dropdown(self, label_text, options, key):
-        ttk.Label(self.root, text=label_text).pack()
-        var = tk.StringVar()
-        dropdown = ttk.Combobox(self.root, textvariable=var, values=options, state="readonly")
-        dropdown.pack()
-        self.choices[key] = var
-
-    def recommend_book(self):
-        key = tuple(self.choices[k].get() for k in ["color", "music", "mood", "time", "drink"])
-
-        if all(key):
-            book, rationale = book_db.get(key, ("a mystery book", "Your vibes are so unique, I had to mix a special one just for you."))
-            message = f"🍸 Here's your book: *{book}*\n\n📖 Rationale: {rationale}"
-            messagebox.showinfo("Your Recommendation", message)
-        else:
-            messagebox.showwarning("Incomplete", "Please fill in all the fields!")
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = BookBartenderApp(root)
-    root.mainloop()
